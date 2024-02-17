@@ -2,9 +2,9 @@ const typingText = document.querySelector(".typing-text p"),
 inpField = document.querySelector(".content-box .input-field");
 
 function randomParagraph() {
-    let randIndex = Math.floor(Math.random()*paragraphs.length)
+    let randomIndex = Math.floor(Math.random()*paragraphs.length)
     typingText.innerHTML = "";
-    paragraphs[randIndex].split("").forEach(span => {
+    paragraphs[randomIndex].split("").forEach(span => {
         let spanTag = `<span>${span}</span>`
         typingText.innerHTML += spanTag
     })
