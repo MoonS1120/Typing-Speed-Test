@@ -1,7 +1,13 @@
 const typingText = document.querySelector(".typing-text p"),
 inputField = document.querySelector(".content-box .input-field");
+timeTag = document.querySelector(".time span b");
+wpmTag = document.querySelector(".wpm span b");
+accTag = document.querySelector(".acc span b");
 
-charIndex = 0;
+let timer,
+maxTime = 30,
+timeLeft = maxTime,
+charIndex = mistakes = isTyping = 0;
 
 function randomParagraph() {
     let randomIndex = Math.floor(Math.random()*paragraphs.length)
@@ -19,21 +25,54 @@ function randomParagraph() {
 function initTyping() {
     const characters = typingText.querySelectorAll("span");
     let typedChar = inputField.value.split("")[charIndex];
-
-    if (typedChar == null) {
-        charIndex--;
-        characters[charIndex].classList.remove("correct", "incorrect");
-    } else {
-        if(characters[charIndex].innerText===typedChar) {
-            characters[charIndex].classList.add("correct");
-        } else {
-            characters[charIndex].classList.add("incorrect");
+    
+    if (charIndex < characters.length - 1 && timeLeft>0) {
+        if (!isTyping) {
+            timer = setInterval(initTimer, 1000);
+            isTyping = true;
         }
-        charIndex++;
+    
+        if (typedChar == null) {
+            charIndex--;
+            if (characters[charIndex].classList.contains("incorrect")) {
+                mistakes--;
+            }
+            characters[charIndex].classList.remove("correct", "incorrect");
+        } else {
+            if(characters[charIndex].innerText===typedChar) {
+                characters[charIndex].classList.add("correct");
+            } else {
+                mistakes++;
+                characters[charIndex].classList.add("incorrect");
+            }
+            charIndex++;
+        }
+        characters.forEach(span => span.classList.remove("active"))
+        characters[charIndex].classList.add("active");
+        
+        let wpm = Math.round((((charIndex - mistakes)/5)/(maxTime-timeLeft))*60)
+        let acc = Math.round(((charIndex-mistakes)/charIndex)*100, 1)
+        wpm=wpm<0 || !wpm || wpm===Infinity ? 0:wpm;
+        acc=acc<0 || !acc || acc===NaN ? 0:acc;
+        wpmTag.innerText = wpm;
+        accTag.innerText = acc;
+    } else {
+        inputField.value = "";
+        clearInterval(timer);
+        characters[charIndex].classList.remove("active");
     }
-    characters.forEach(span => span.classList.remove("active"))
-    characters[charIndex].classList.add("active");
+
 }
+
+function initTimer() {
+    if (timeLeft>0) {
+        timeLeft--;
+        timeTag.innerText = timeLeft;
+    } else {
+        clearInterval(timer);
+    }
+}
+
 
 randomParagraph();
 inputField.addEventListener("input", initTyping);
