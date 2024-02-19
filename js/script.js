@@ -3,6 +3,7 @@ inputField = document.querySelector(".content-box .input-field");
 timeTag = document.querySelector(".time span b");
 wpmTag = document.querySelector(".wpm span b");
 accTag = document.querySelector(".acc span b");
+resetButton = document.querySelector("button");
 
 let timer,
 maxTime = 30,
@@ -10,9 +11,9 @@ timeLeft = maxTime,
 charIndex = mistakes = isTyping = 0;
 
 function randomParagraph() {
-    let randomIndex = Math.floor(Math.random()*paragraphs.length)
+    let randIndex = Math.floor(Math.random()*paragraphs.length)
     typingText.innerHTML = "";
-    paragraphs[randomIndex].split("").forEach(span => {
+    paragraphs[randIndex].split("").forEach(span => {
         let spanTag = `<span>${span}</span>`
         typingText.innerHTML += spanTag
     })
@@ -73,6 +74,18 @@ function initTimer() {
     }
 }
 
+function reset() {
+    randomParagraph();
+    inputField.value = "";
+    clearInterval(timer);
+    timeLeft = maxTime,
+    charIndex = mistakes = isTyping = 0;
+
+    timeTag.innerText = timeLeft;
+    wpmTag.innerText = 0;
+    accTag.innerText = 0;
+}
 
 randomParagraph();
 inputField.addEventListener("input", initTyping);
+resetButton.addEventListener("click", reset);
